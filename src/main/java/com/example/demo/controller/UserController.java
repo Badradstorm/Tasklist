@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.UserDto;
 import com.example.demo.exception.UserAlreadyExistsException;
 import com.example.demo.exception.UserNotFoundException;
-import com.example.demo.model.User;
+import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import java.util.List;
 import org.springframework.http.ResponseEntity;

@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.exception.TodoNotFoundException;
 import com.example.demo.exception.UserNotFoundException;
-import com.example.demo.model.Todo;
+import com.example.demo.entity.Todo;
 import com.example.demo.service.TodoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
