@@ -23,20 +23,13 @@ public class TodoController {
   }
 
   @PostMapping
-  public ResponseEntity create(@RequestBody Todo todo, @RequestParam int userId) {
-    try {
+  public ResponseEntity<?> create(@RequestBody Todo todo, @RequestParam int userId)
+      throws UserNotFoundException {
       return ResponseEntity.ok(todoService.create(todo, userId));
-    } catch (UserNotFoundException e) {
-      return ResponseEntity.badRequest().body("Пользователь не найден");
-    }
   }
 
   @PutMapping
-  public ResponseEntity complete(@RequestParam int id) {
-    try {
+  public ResponseEntity<?> complete(@RequestParam int id) throws TodoNotFoundException {
       return ResponseEntity.ok(todoService.complete(id));
-    } catch (TodoNotFoundException e) {
-      return ResponseEntity.badRequest().body("Задача не найдена");
-    }
   }
 }

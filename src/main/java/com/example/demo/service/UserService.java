@@ -19,7 +19,8 @@ public class UserService {
   }
 
   public void create(User user) throws UserAlreadyExistsException {
-    if (repository.findByUsername(user.getUsername()) != null || repository.existsById(user.getId())) {
+    if (repository.findByUsername(user.getUsername()) != null || repository.existsById(
+        user.getId())) {
       throw new UserAlreadyExistsException("Пользователь с таким именем или id уже существует!");
     }
     repository.save(user);
@@ -32,11 +33,12 @@ public class UserService {
   }
 
   public UserDto getOne(int id) throws UserNotFoundException {
-    User user = repository.findById(id).orElseThrow(UserNotFoundException::new);
+    User user = repository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
     return UserDto.toDto(user);
   }
 
-  public int delete(int id) throws UserNotFoundException {
+  public int delete(int id) {
     repository.deleteById(id);
     return id;
   }

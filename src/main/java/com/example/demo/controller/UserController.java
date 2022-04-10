@@ -27,34 +27,22 @@ public class UserController {
 
   @GetMapping
   public ResponseEntity<List<UserDto>> getAll() {
-      return ResponseEntity.ok(service.getAll());
+    return ResponseEntity.ok(service.getAll());
   }
 
   @GetMapping("{id}")
-  public ResponseEntity getOne(@PathVariable int id) {
-    try {
-      return ResponseEntity.ok(service.getOne(id));
-    } catch (UserNotFoundException e) {
-      return ResponseEntity.badRequest().body("Пользователь не найден");
-    }
+  public ResponseEntity<?> getOne(@PathVariable int id) throws UserNotFoundException {
+    return ResponseEntity.ok(service.getOne(id));
   }
 
   @PostMapping
-  public ResponseEntity create(@RequestBody User user) {
-    try {
-      service.create(user);
-      return ResponseEntity.ok("Пользователь успешно сохранен");
-    } catch (UserAlreadyExistsException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
+  public ResponseEntity<?> create(@RequestBody User user) throws UserAlreadyExistsException {
+    service.create(user);
+    return ResponseEntity.ok("Пользователь успешно сохранен");
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity delete(@PathVariable int id) {
-    try {
-      return ResponseEntity.ok(service.delete(id));
-    } catch (UserNotFoundException e) {
-      return ResponseEntity.badRequest().body("Пользователь не найден");
-    }
+  public ResponseEntity<?> delete(@PathVariable int id) {
+    return ResponseEntity.ok(service.delete(id));
   }
 }

@@ -21,13 +21,13 @@ public class TodoService {
   }
 
   public TodoDto create(Todo todo, int userId) throws UserNotFoundException {
-    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
     todo.setUser(user);
     return TodoDto.toDto(todoRepository.save(todo));
   }
 
   public TodoDto complete(int id) throws TodoNotFoundException {
-    Todo todo = todoRepository.findById(id).orElseThrow(TodoNotFoundException::new);
+    Todo todo = todoRepository.findById(id).orElseThrow(() -> new TodoNotFoundException("Задача не найдена"));
     todo.setCompleted(!todo.isCompleted());
     return TodoDto.toDto(todoRepository.save(todo));
   }
