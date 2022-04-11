@@ -1,10 +1,10 @@
 package com.example.demo.dto.converter;
 
-import com.example.demo.dto.TodoDto;
+import com.example.demo.dto.TaskDto;
 import com.example.demo.dto.UserDto;
-import com.example.demo.dto.mapper.TodoMapper;
+import com.example.demo.dto.mapper.TaskMapper;
 import com.example.demo.dto.mapper.UserMapper;
-import com.example.demo.entity.Todo;
+import com.example.demo.entity.Task;
 import com.example.demo.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -12,18 +12,18 @@ import org.springframework.stereotype.Component;
 public class EntityConverter {
 
   private final UserMapper userMapper;
-  private final TodoMapper todoMapper;
+  private final TaskMapper taskMapper;
 
-  public EntityConverter(UserMapper userMapper, TodoMapper todoMapper) {
+  public EntityConverter(UserMapper userMapper, TaskMapper todoMapper) {
     this.userMapper = userMapper;
-    this.todoMapper = todoMapper;
+    this.taskMapper = todoMapper;
   }
 
   public UserDto toDto(User user) {
     return userMapper.toDto(user);
   }
 
-  public TodoDto toDto(Todo todo) {
-    return todoMapper.toDto(todo);
+  public TaskDto toDto(Task task) {
+    return taskMapper.toDto(task);
   }
 }

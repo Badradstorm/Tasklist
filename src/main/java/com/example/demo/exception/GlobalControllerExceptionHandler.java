@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalControllerExceptionHandler {
 
   @ExceptionHandler({
-      TodoNotFoundException.class,
+      TaskNotFoundException.class,
       UserAlreadyExistsException.class,
       UserNotFoundException.class})
   public ResponseEntity<Response> handleException(Exception e) {

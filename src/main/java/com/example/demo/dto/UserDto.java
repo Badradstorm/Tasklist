@@ -8,5 +8,5 @@ public class UserDto {
 
   private int id;
   private String username;
-  private List<TodoDto> toDoList;
+  private List<TaskDto> toDoList;
 }

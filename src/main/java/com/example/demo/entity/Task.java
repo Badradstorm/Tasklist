@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString
 @RequiredArgsConstructor
 @Entity
-public class Todo {
+public class Task {
 
   @Id
   @GeneratedValue
@@ -33,10 +33,10 @@ public class Todo {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof Todo)) {
+    if (!(o instanceof Task)) {
       return false;
     }
-    Todo todo = (Todo) o;
+    Task todo = (Task) o;
     return id == todo.id && completed == todo.completed && Objects.equals(title, todo.title)
         && Objects.equals(user, todo.user);
   }

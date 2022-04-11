@@ -28,7 +28,7 @@ public class User {
   private String password;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-  private List<Todo> toDoList;
+  private List<Task> taskList;
 
   @Override
   public boolean equals(Object o) {
