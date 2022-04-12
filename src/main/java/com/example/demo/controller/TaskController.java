@@ -19,16 +19,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/task")
 public class TaskController {
 
-  private final TaskService todoService;
+  private final TaskService taskService;
 
   public TaskController(TaskService taskService) {
-    this.todoService = taskService;
+    this.taskService = taskService;
   }
 
   @PostMapping
   public ResponseEntity<?> create(@RequestBody Task task, @RequestParam int userId)
       throws UserNotFoundException {
-    TaskDto taskDto = todoService.create(task, userId);
+    TaskDto taskDto = taskService.create(task, userId);
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
         .path("/{id}")
@@ -40,6 +40,6 @@ public class TaskController {
 
   @PutMapping
   public ResponseEntity<?> complete(@RequestParam int taskId) throws TaskNotFoundException {
-      return ResponseEntity.ok(todoService.complete(taskId));
+      return ResponseEntity.ok(taskService.complete(taskId));
   }
 }

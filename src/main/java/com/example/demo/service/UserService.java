@@ -22,12 +22,12 @@ public class UserService {
     this.converter = converter;
   }
 
-  public void create(User user) throws UserAlreadyExistsException {
+  public UserDto create(User user) throws UserAlreadyExistsException {
     if (userRepository.findByUsername(user.getUsername()) != null || userRepository.existsById(
         user.getId())) {
       throw new UserAlreadyExistsException("Пользователь с таким именем или id уже существует!");
     }
-    userRepository.save(user);
+    return converter.toDto(userRepository.save(user));
   }
 
   public List<UserDto> getAll() {

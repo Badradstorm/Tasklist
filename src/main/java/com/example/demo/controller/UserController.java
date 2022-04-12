@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.TaskDto;
 import com.example.demo.dto.UserDto;
 import com.example.demo.exception.UserAlreadyExistsException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/user")
@@ -37,8 +40,13 @@ public class UserController {
 
   @PostMapping
   public ResponseEntity<?> create(@RequestBody User user) throws UserAlreadyExistsException {
-    service.create(user);
-    return ResponseEntity.ok("Пользователь успешно сохранен");
+    UserDto userDto = service.create(user);
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path("/{id}")
+        .buildAndExpand(userDto.getId())
+        .toUri();
+    return ResponseEntity.created(location).build();
   }
 
   @DeleteMapping("{id}")

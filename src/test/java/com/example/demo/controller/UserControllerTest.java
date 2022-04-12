@@ -3,14 +3,13 @@ package com.example.demo.controller;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.demo.dto.UserDto;
@@ -71,14 +70,15 @@ class UserControllerTest {
 
   @Test
   void testCreate() throws Exception {
-    doNothing().when(service).create(any(User.class));
+    when(service.create(any(User.class))).thenReturn(userDto);
 
     this.mockMvc
         .perform(post("/user")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"id\":1,\"username\":\"name\"}"))
-        .andExpect(status().isOk())
-        .andExpect(content().string(containsString("Пользователь успешно сохранен")))
+        .andExpect(status().isCreated())
+        .andExpect(header().exists("Location"))
+        .andExpect(header().string("Location", containsString("http://localhost/user/1")))
         .andDo(print());
   }
 
