@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.BasicTest;
+import com.example.demo.BaseMockTest;
 import com.example.demo.dto.UserDto;
 import com.example.demo.dto.converter.EntityConverter;
 import com.example.demo.entity.User;
@@ -23,9 +23,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
-class UserServiceTest extends BasicTest {
+class UserServiceTest extends BaseMockTest {
 
   @Mock
   private UserRepository userRepository;

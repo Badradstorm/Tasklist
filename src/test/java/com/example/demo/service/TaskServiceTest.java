@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.example.demo.BasicTest;
+import com.example.demo.BaseMockTest;
 import com.example.demo.dto.TaskDto;
 import com.example.demo.dto.converter.EntityConverter;
 import com.example.demo.entity.Task;
@@ -21,7 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-class TaskServiceTest extends BasicTest {
+class TaskServiceTest extends BaseMockTest {
 
   @Mock
   private TaskRepository taskRepository;
