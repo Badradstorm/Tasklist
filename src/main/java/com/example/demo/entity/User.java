@@ -8,6 +8,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -24,7 +28,12 @@ public class User {
   @Id
   @GeneratedValue
   private int id;
+
+  @NotEmpty(message = "Вы не указали имя")
+  @Size(min = 3, max = 20, message = "Имя должно содержать не менее 3 и не более 20 символов")
   private String username;
+
+  @NotEmpty(message = "Вы не указали пароль")
   private String password;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")

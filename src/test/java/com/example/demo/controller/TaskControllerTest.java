@@ -57,6 +57,22 @@ class TaskControllerTest {
   }
 
   @Test
+  void testCreateNotValidTask() throws Exception {
+    when(service.create(any(Task.class), anyInt())).thenReturn(taskDto);
+
+    this.mockMvc
+        .perform(post("/task")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"id\": \"1\",\"title\": \"\"}")
+            .queryParam("userId", "2"))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(content().string(containsString("{\"violations\":"
+            + "[{\"message\":\"title\",\"fieldName\":\"Вы не указали название задачи\"}]}")))
+        .andDo(print());
+  }
+
+  @Test
   void testComplete() throws Exception {
     when(service.complete(anyInt())).thenReturn(taskDto);
 

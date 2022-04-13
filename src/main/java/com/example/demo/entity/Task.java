@@ -6,10 +6,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Value;
 
 @Getter
 @Setter
@@ -21,6 +23,7 @@ public class Task {
   @Id
   @GeneratedValue
   private int id;
+  @NotBlank(message = "Вы не указали название задачи")
   private String title;
   private boolean completed;
 

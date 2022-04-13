@@ -75,10 +75,28 @@ class UserControllerTest {
     this.mockMvc
         .perform(post("/user")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"id\":1,\"username\":\"name\"}"))
+            .content("{\"username\":\"name\",\"password\":\"pass\"}"))
         .andExpect(status().isCreated())
         .andExpect(header().exists("Location"))
         .andExpect(header().string("Location", containsString("http://localhost/user/1")))
+        .andDo(print());
+  }
+
+  @Test
+  void testCreateNotValidUser() throws Exception {
+    when(service.create(any(User.class))).thenReturn(userDto);
+
+    this.mockMvc
+        .perform(post("/user")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"username\":\"na\"}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(content().string(containsString("{\"violations\":"
+            + "[{\"message\":\"password\","
+            + "\"fieldName\":\"Вы не указали пароль\"},"
+            + "{\"message\":\"username\","
+            + "\"fieldName\":\"Имя должно содержать не менее 3 и не более 20 символов\"}")))
         .andDo(print());
   }
 
