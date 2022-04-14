@@ -44,7 +44,7 @@ class UserServiceTest extends BaseMockTest {
 
   @Test
   void testCreate() throws UserAlreadyExistsException {
-    when(userRepository.findByUsername(anyString())).thenReturn(null);
+    when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
     when(userRepository.existsById(anyInt())).thenReturn(false);
     when(userRepository.save(any(User.class))).thenReturn(new User());
 
@@ -58,14 +58,14 @@ class UserServiceTest extends BaseMockTest {
 
   @Test
   void testCreateUserAlreadyExistsByUsername() {
-    when(userRepository.findByUsername(anyString())).thenReturn(new User());
+    when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new User()));
 
     Assertions.assertThrows(UserAlreadyExistsException.class, () -> userService.create(user));
   }
 
   @Test
   void testCreateUserAlreadyExistsById() {
-    when(userRepository.findByUsername("1")).thenReturn(new User());
+    when(userRepository.findByUsername("1")).thenReturn(Optional.empty());
     when(userRepository.existsById(1)).thenReturn(true);
 
     Assertions.assertThrows(UserAlreadyExistsException.class, () -> userService.create(user));

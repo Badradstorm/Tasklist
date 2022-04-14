@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.matchesRegex;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -92,11 +93,8 @@ class UserControllerTest {
             .content("{\"username\":\"na\"}"))
         .andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-        .andExpect(content().string(containsString("{\"violations\":"
-            + "[{\"message\":\"password\","
-            + "\"fieldName\":\"Вы не указали пароль\"},"
-            + "{\"message\":\"username\","
-            + "\"fieldName\":\"Имя должно содержать не менее 3 и не более 20 символов\"}")))
+        .andExpect(content().string(matchesRegex(".*Вы не указали пароль.*")))
+        .andExpect(content().string(matchesRegex(".*Имя должно содержать не менее 3 и не более 20 символов.*")))
         .andDo(print());
   }
 

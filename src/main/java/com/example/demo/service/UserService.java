@@ -8,6 +8,7 @@ import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,7 +24,7 @@ public class UserService {
   }
 
   public UserDto create(User user) throws UserAlreadyExistsException {
-    if (userRepository.findByUsername(user.getUsername()) != null || userRepository.existsById(
+    if (userRepository.findByUsername(user.getUsername()).isPresent() || userRepository.existsById(
         user.getId())) {
       throw new UserAlreadyExistsException("Пользователь с таким именем или id уже существует!");
     }
