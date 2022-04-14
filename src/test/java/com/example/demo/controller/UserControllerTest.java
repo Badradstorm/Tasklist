@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -95,6 +96,20 @@ class UserControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(content().string(matchesRegex(".*Вы не указали пароль.*")))
         .andExpect(content().string(matchesRegex(".*Имя должно содержать не менее 3 и не более 20 символов.*")))
+        .andDo(print());
+  }
+
+  @Test
+  void testUpdate() throws Exception {
+    when(service.update(any(User.class))).thenReturn(userDto);
+
+    this.mockMvc
+        .perform(put("/user")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"username\":\"name\",\"password\":\"pass\"}"))
+        .andExpect(status().isCreated())
+        .andExpect(header().exists("Location"))
+        .andExpect(header().string("Location", containsString("http://localhost/user/1")))
         .andDo(print());
   }
 

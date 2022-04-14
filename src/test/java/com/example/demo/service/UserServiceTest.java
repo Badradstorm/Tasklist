@@ -13,7 +13,7 @@ import com.example.demo.BaseMockTest;
 import com.example.demo.dto.UserDto;
 import com.example.demo.dto.converter.EntityConverter;
 import com.example.demo.entity.User;
-import com.example.demo.exception.UserAlreadyExistsException;
+import com.example.demo.exception.UsernameAlreadyExistsException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import java.util.Collections;
@@ -43,32 +43,24 @@ class UserServiceTest extends BaseMockTest {
   }
 
   @Test
-  void testCreate() throws UserAlreadyExistsException {
-    when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
-    when(userRepository.existsById(anyInt())).thenReturn(false);
+  void testCreate() throws UsernameAlreadyExistsException {
+    when(userRepository.existsByUsername(anyString())).thenReturn(false);
     when(userRepository.save(any(User.class))).thenReturn(new User());
+    when(converter.toDto(any(User.class))).thenReturn(new UserDto());
 
     userService.create(user);
 
-    verify(userRepository).findByUsername(anyString());
-    verify(userRepository).existsById(anyInt());
+    verify(userRepository).existsByUsername(anyString());
     verify(userRepository).save(any(User.class));
+    verify(converter).toDto(any(User.class));
     verifyNoMoreInteractions(userRepository);
   }
 
   @Test
-  void testCreateUserAlreadyExistsByUsername() {
-    when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new User()));
+  void testCreateUserAlreadyExists() {
+    when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
-    Assertions.assertThrows(UserAlreadyExistsException.class, () -> userService.create(user));
-  }
-
-  @Test
-  void testCreateUserAlreadyExistsById() {
-    when(userRepository.findByUsername("1")).thenReturn(Optional.empty());
-    when(userRepository.existsById(1)).thenReturn(true);
-
-    Assertions.assertThrows(UserAlreadyExistsException.class, () -> userService.create(user));
+    Assertions.assertThrows(UsernameAlreadyExistsException.class, () -> userService.create(user));
   }
 
   @Test
@@ -107,19 +99,50 @@ class UserServiceTest extends BaseMockTest {
   }
 
   @Test
-  void testGetOneUserNotFound() {
+  void testGetOneNotFound() {
     when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
 
     Assertions.assertThrows(UserNotFoundException.class, () -> userService.getOne(anyInt()));
   }
 
   @Test
-  void delete() {
+  void testDelete() {
     doNothing().when(userRepository).deleteById(anyInt());
 
     userService.delete(anyInt());
 
     verify(userRepository).deleteById(anyInt());
     verifyNoMoreInteractions(userRepository);
+  }
+
+  @Test
+  void testUpdate() throws UserNotFoundException, UsernameAlreadyExistsException {
+    when(userRepository.findById(anyInt())).thenReturn(Optional.of(new User()));
+    when(userRepository.existsByUsername(anyString())).thenReturn(false);
+    when(userRepository.save(any(User.class))).thenReturn(new User());
+    when(converter.toDto(any(User.class))).thenReturn(new UserDto());
+
+    userService.update(user);
+
+    verify(userRepository).findById(anyInt());
+    verify(userRepository).existsByUsername(anyString());
+    verify(userRepository).save(any(User.class));
+    verify(converter).toDto(any(User.class));
+    verifyNoMoreInteractions(userRepository);
+  }
+
+  @Test
+  void testUpdateNotFound() {
+    when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(UserNotFoundException.class, () -> userService.getOne(anyInt()));
+  }
+
+  @Test
+  void testUpdateUserAlreadyExists() {
+    when(userRepository.findById(anyInt())).thenReturn(Optional.of(new User()));
+    when(userRepository.existsByUsername(anyString())).thenReturn(true);
+
+    Assertions.assertThrows(UsernameAlreadyExistsException.class, () -> userService.update(user));
   }
 }

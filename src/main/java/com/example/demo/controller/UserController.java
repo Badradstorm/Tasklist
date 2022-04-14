@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.User;
-import com.example.demo.exception.UserAlreadyExistsException;
+import com.example.demo.exception.UsernameAlreadyExistsException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.service.UserService;
 import java.net.URI;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,18 +43,27 @@ public class UserController {
   }
 
   @PostMapping
-  public ResponseEntity<?> create(@Valid @RequestBody User user) throws UserAlreadyExistsException {
-    UserDto userDto = service.create(user);
+  public ResponseEntity<?> create(@Valid @RequestBody User user) throws UsernameAlreadyExistsException {
+    return responseWithLocation(service.create(user));
+  }
+
+  @DeleteMapping("{id}")
+  public ResponseEntity<?> delete(@PathVariable @NotNull int id) {
+    return ResponseEntity.ok(service.delete(id));
+  }
+
+  @PutMapping
+  public ResponseEntity<?> update(@Valid @RequestBody User user)
+      throws UsernameAlreadyExistsException, UserNotFoundException {
+    return responseWithLocation(service.update(user));
+  }
+
+  private ResponseEntity<?> responseWithLocation(UserDto userDto) {
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
         .path("/{id}")
         .buildAndExpand(userDto.getId())
         .toUri();
     return ResponseEntity.created(location).build();
-  }
-
-  @DeleteMapping("{id}")
-  public ResponseEntity<?> delete(@PathVariable @NotNull int id) {
-    return ResponseEntity.ok(service.delete(id));
   }
 }

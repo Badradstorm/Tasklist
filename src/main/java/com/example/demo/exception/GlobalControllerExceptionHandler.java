@@ -17,7 +17,7 @@ public class GlobalControllerExceptionHandler {
 
   @ExceptionHandler({
       TaskNotFoundException.class,
-      UserAlreadyExistsException.class,
+      UsernameAlreadyExistsException.class,
       UserNotFoundException.class})
   public ResponseEntity<Response> handleException(Exception e) {
     Response response = new Response(e.getMessage());

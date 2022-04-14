@@ -3,7 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.UserDto;
 import com.example.demo.dto.converter.EntityConverter;
 import com.example.demo.entity.User;
-import com.example.demo.exception.UserAlreadyExistsException;
+import com.example.demo.exception.UsernameAlreadyExistsException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import java.util.List;
@@ -23,28 +23,44 @@ public class UserService {
     this.converter = converter;
   }
 
-  public UserDto create(User user) throws UserAlreadyExistsException {
-    if (userRepository.findByUsername(user.getUsername()).isPresent() || userRepository.existsById(
-        user.getId())) {
-      throw new UserAlreadyExistsException("Пользователь с таким именем или id уже существует!");
-    }
+  public UserDto create(User user) throws UsernameAlreadyExistsException {
+    checkExistsUsername(user.getUsername());
     return converter.toDto(userRepository.save(user));
   }
 
+  @Cacheable("users")
   public List<UserDto> getAll() {
     return userRepository.findAll().stream()
         .map(converter::toDto)
         .collect(Collectors.toList());
   }
 
+  @Cacheable("users")
   public UserDto getOne(int id) throws UserNotFoundException {
-    User user = userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-    return converter.toDto(user);
+    return converter.toDto(get(id));
+  }
+
+  public UserDto update(User user) throws UserNotFoundException, UsernameAlreadyExistsException {
+    User userFromDb = get(user.getId());
+    checkExistsUsername(user.getUsername());
+    userFromDb.setUsername(user.getUsername());
+    userFromDb.setPassword(user.getPassword());
+    return converter.toDto(userRepository.save(userFromDb));
   }
 
   public int delete(int id) {
     userRepository.deleteById(id);
     return id;
+  }
+
+  private User get(int id) throws UserNotFoundException {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+  }
+
+  private void checkExistsUsername(String username) throws UsernameAlreadyExistsException {
+    if (userRepository.existsByUsername(username)) {
+      throw new UsernameAlreadyExistsException("Пользователь с таким именем уже существует!");
+    }
   }
 }
