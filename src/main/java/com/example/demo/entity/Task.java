@@ -2,8 +2,6 @@ package com.example.demo.entity;
 
 import java.util.Objects;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
@@ -17,13 +15,11 @@ import lombok.ToString;
 @ToString
 @RequiredArgsConstructor
 @Entity
-public class Task {
+public class Task extends BaseEntity {
 
-  @Id
-  @GeneratedValue
-  private int id;
   @NotBlank(message = "Вы не указали название задачи")
   private String title;
+
   private boolean completed;
 
   @ManyToOne
@@ -38,13 +34,16 @@ public class Task {
     if (!(o instanceof Task)) {
       return false;
     }
-    Task todo = (Task) o;
-    return Objects.equals(title, todo.title)
-        && Objects.equals(user, todo.user);
+    if (!super.equals(o)) {
+      return false;
+    }
+    Task task = (Task) o;
+    return completed == task.completed && Objects.equals(title, task.title)
+        && Objects.equals(user, task.user);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, completed, user);
+    return Objects.hash(super.hashCode(), title, completed, user);
   }
 }
