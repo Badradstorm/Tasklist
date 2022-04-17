@@ -8,6 +8,8 @@ import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,7 @@ public class UserService {
     return converter.toDto(get(id));
   }
 
+  @CachePut("users")
   public UserDto update(User user) throws UserNotFoundException, UsernameAlreadyExistsException {
     User userFromDb = get(user.getId());
     checkExistsUsername(user.getUsername());
@@ -48,6 +51,7 @@ public class UserService {
     return converter.toDto(userRepository.save(userFromDb));
   }
 
+  @CacheEvict("users")
   public int delete(int id) {
     userRepository.deleteById(id);
     return id;

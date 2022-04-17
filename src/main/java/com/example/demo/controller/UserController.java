@@ -2,10 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.User;
-import com.example.demo.exception.UsernameAlreadyExistsException;
 import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.exception.UsernameAlreadyExistsException;
 import com.example.demo.service.UserService;
-import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -19,12 +18,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Validated
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends BaseController {
 
   private final UserService service;
 
@@ -56,14 +54,5 @@ public class UserController {
   public ResponseEntity<?> update(@Valid @RequestBody User user)
       throws UsernameAlreadyExistsException, UserNotFoundException {
     return responseWithLocation(service.update(user));
-  }
-
-  private ResponseEntity<?> responseWithLocation(UserDto userDto) {
-    URI location = ServletUriComponentsBuilder
-        .fromCurrentRequest()
-        .path("/{id}")
-        .buildAndExpand(userDto.getId())
-        .toUri();
-    return ResponseEntity.created(location).build();
   }
 }

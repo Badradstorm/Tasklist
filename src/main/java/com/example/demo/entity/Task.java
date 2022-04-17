@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.beans.factory.annotation.Value;
 
 @Getter
 @Setter
@@ -40,7 +39,7 @@ public class Task {
       return false;
     }
     Task todo = (Task) o;
-    return id == todo.id && completed == todo.completed && Objects.equals(title, todo.title)
+    return Objects.equals(title, todo.title)
         && Objects.equals(user, todo.user);
   }
 

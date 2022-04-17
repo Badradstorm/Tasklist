@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -73,15 +74,46 @@ class TaskControllerTest {
   }
 
   @Test
-  void testComplete() throws Exception {
-    when(service.complete(anyInt())).thenReturn(taskDto);
+  void testUpdate() throws Exception {
+    when(service.update(any(Task.class), anyInt())).thenReturn(taskDto);
 
     this.mockMvc
         .perform(put("/task")
-            .queryParam("taskId", "1"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"id\": \"1\",\"title\": \"title\",\"completed\": false}")
+            .queryParam("userId", "2"))
+        .andExpect(status().isCreated())
+        .andExpect(header().exists("Location"))
+        .andExpect(header().string("Location", containsString("http://localhost/task/1")))
+        .andDo(print());
+  }
+
+  @Test
+  void testUpdateNotValidTask() throws Exception {
+    when(service.update(any(Task.class), anyInt())).thenReturn(taskDto);
+
+    this.mockMvc
+        .perform(put("/task")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"id\": \"1\",\"title\": \"\"}")
+            .queryParam("userId", "2"))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(content().string(containsString("{\"violations\":"
+            + "[{\"message\":\"title\",\"fieldName\":\"Вы не указали название задачи\"}]}")))
+        .andDo(print());
+  }
+
+  @Test
+  void testDelete() throws Exception {
+    when(service.delete(anyInt())).thenReturn(2);
+
+    this.mockMvc
+        .perform(delete("/task")
+            .contentType(MediaType.APPLICATION_JSON)
+            .queryParam("taskId", "2"))
         .andExpect(status().isOk())
-        .andExpect(content()
-            .string(containsString("{\"id\":1,\"title\":\"title\",\"completed\":false}")))
+        .andExpect(content().string("2"))
         .andDo(print());
   }
 }

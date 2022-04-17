@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -15,6 +16,8 @@ import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,11 +42,14 @@ class TaskServiceTest extends BaseMockTest {
 
   @Test
   public void testCreate() throws UserNotFoundException {
-    when(userRepository.findById(anyInt())).thenReturn(Optional.of(new User()));
+    User user = new User();
+    user.setTaskList(new ArrayList<>());
+
+    when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
     when(taskRepository.save(any(Task.class))).thenReturn(new Task());
     when(converter.toDto(any(Task.class))).thenReturn(new TaskDto());
 
-    service.create(new Task(), 1);
+    service.create(new Task(), anyInt());
 
     verify(userRepository).findById(anyInt());
     verify(taskRepository).save(any(Task.class));
@@ -59,23 +65,50 @@ class TaskServiceTest extends BaseMockTest {
   }
 
   @Test
-  public void testComplete() throws TaskNotFoundException {
-    when(taskRepository.findById(anyInt())).thenReturn(Optional.of(new Task()));
+  public void testUpdate() throws UserNotFoundException, TaskNotFoundException {
+    Task task = new Task();
+    task.setTitle("title");
+    User user = new User();
+    user.setTaskList(List.of(task));
+
+    when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
     when(taskRepository.save(any(Task.class))).thenReturn(new Task());
     when(converter.toDto(any(Task.class))).thenReturn(new TaskDto());
 
-    service.complete(1);
+    service.update(task, anyInt());
 
-    verify(taskRepository).findById(anyInt());
+    verify(userRepository).findById(anyInt());
     verify(taskRepository).save(any(Task.class));
     verify(converter).toDto(any(Task.class));
     verifyNoMoreInteractions(taskRepository);
   }
 
   @Test
-  public void testCompleteTaskNotFound() {
-    when(taskRepository.findById(anyInt())).thenReturn(Optional.empty());
+  public void testUpdateUserNotFound() {
+    when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(TaskNotFoundException.class, () -> service.complete(1));
+    Assertions.assertThrows(UserNotFoundException.class, () -> service.update(new Task(), 1));
+  }
+
+  @Test
+  public void testUpdateTaskNotFound() {
+    Task task = new Task();
+    task.setTitle("title");
+    User user = new User();
+    user.setTaskList(new ArrayList<>());
+
+    when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
+
+    Assertions.assertThrows(TaskNotFoundException.class, () -> service.update(task, anyInt()));
+  }
+
+  @Test
+  public void testDelete() {
+    doNothing().when(taskRepository).deleteById(anyInt());
+
+    service.delete(anyInt());
+
+    verify(taskRepository).deleteById(anyInt());
+    verifyNoMoreInteractions(taskRepository);
   }
 }

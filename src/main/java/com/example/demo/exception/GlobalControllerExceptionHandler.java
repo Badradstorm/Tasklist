@@ -5,6 +5,7 @@ import com.example.demo.dto.ValidationErrorResponse;
 import com.example.demo.dto.ViolationResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -21,6 +22,12 @@ public class GlobalControllerExceptionHandler {
       UserNotFoundException.class})
   public ResponseEntity<Response> handleException(Exception e) {
     Response response = new Response(e.getMessage());
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler({EmptyResultDataAccessException.class})
+  public ResponseEntity<Response> handleEmptyResultException() {
+    Response response = new Response("Объект запроса не найден");
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
