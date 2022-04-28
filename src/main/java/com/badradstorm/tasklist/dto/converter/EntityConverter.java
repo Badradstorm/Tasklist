@@ -4,8 +4,8 @@ import com.badradstorm.tasklist.dto.mapper.TaskMapper;
 import com.badradstorm.tasklist.dto.mapper.UserMapper;
 import com.badradstorm.tasklist.entity.Task;
 import com.badradstorm.tasklist.entity.User;
-import com.badradstorm.tasklist.dto.TaskDto;
-import com.badradstorm.tasklist.dto.UserDto;
+import com.badradstorm.tasklist.dto.response.TaskDto;
+import com.badradstorm.tasklist.dto.response.UserDto;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,8 +1,9 @@
 package com.badradstorm.tasklist.service;
 
+import com.badradstorm.tasklist.dto.response.MessageResponse;
 import com.badradstorm.tasklist.exception.UserNotFoundException;
 import com.badradstorm.tasklist.repository.UserRepository;
-import com.badradstorm.tasklist.dto.UserDto;
+import com.badradstorm.tasklist.dto.response.UserDto;
 import com.badradstorm.tasklist.dto.converter.EntityConverter;
 import com.badradstorm.tasklist.entity.User;
 import com.badradstorm.tasklist.exception.UsernameAlreadyExistsException;
@@ -62,9 +63,9 @@ public class UserService implements UserDetailsService {
   }
 
   @CacheEvict("users")
-  public int delete(int id) {
+  public MessageResponse delete(int id) {
     userRepository.deleteById(id);
-    return id;
+    return new MessageResponse("Пользователь удален!");
   }
 
   private User get(int id) throws UserNotFoundException {

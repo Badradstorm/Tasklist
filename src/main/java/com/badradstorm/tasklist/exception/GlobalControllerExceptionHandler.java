@@ -1,8 +1,8 @@
 package com.badradstorm.tasklist.exception;
 
-import com.badradstorm.tasklist.dto.Response;
-import com.badradstorm.tasklist.dto.ValidationErrorResponse;
-import com.badradstorm.tasklist.dto.ViolationResponse;
+import com.badradstorm.tasklist.dto.response.MessageResponse;
+import com.badradstorm.tasklist.dto.response.ValidationErrorResponse;
+import com.badradstorm.tasklist.dto.response.ViolationResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,22 +21,22 @@ public class GlobalControllerExceptionHandler {
       TaskNotFoundException.class,
       UsernameAlreadyExistsException.class,
       UserNotFoundException.class})
-  public ResponseEntity<Response> handleException(Exception e) {
-    Response response = new Response(e.getMessage());
+  public ResponseEntity<MessageResponse> handleException(Exception e) {
+    MessageResponse response = new MessageResponse(e.getMessage());
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler({
       JwtAuthenticationException.class,
       AuthenticationException.class})
-  public ResponseEntity<Response> handleException(JwtAuthenticationException e) {
-    Response response = new Response(e.getMessage());
+  public ResponseEntity<MessageResponse> handleException(AuthenticationException e) {
+    MessageResponse response = new MessageResponse(e.getMessage());
     return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
   }
 
   @ExceptionHandler({EmptyResultDataAccessException.class})
-  public ResponseEntity<Response> handleEmptyResultException() {
-    Response response = new Response("Объект запроса не найден");
+  public ResponseEntity<MessageResponse> handleEmptyResultException() {
+    MessageResponse response = new MessageResponse("Объект запроса не найден");
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 

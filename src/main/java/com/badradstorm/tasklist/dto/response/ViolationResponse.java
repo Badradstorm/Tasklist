@@ -1,4 +1,4 @@
-package com.badradstorm.tasklist.dto;
+package com.badradstorm.tasklist.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ViolationResponse extends Response {
+public class ViolationResponse extends MessageResponse {
 
   private final String fieldName;
 

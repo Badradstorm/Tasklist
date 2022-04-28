@@ -1,13 +1,15 @@
 package com.badradstorm.tasklist.service;
 
-import com.badradstorm.tasklist.exception.UserNotFoundException;
-import com.badradstorm.tasklist.repository.TaskRepository;
-import com.badradstorm.tasklist.repository.UserRepository;
-import com.badradstorm.tasklist.dto.TaskDto;
+import com.badradstorm.tasklist.dto.response.TaskDto;
 import com.badradstorm.tasklist.dto.converter.EntityConverter;
 import com.badradstorm.tasklist.entity.Task;
 import com.badradstorm.tasklist.entity.User;
 import com.badradstorm.tasklist.exception.TaskNotFoundException;
+import com.badradstorm.tasklist.exception.UserNotFoundException;
+import com.badradstorm.tasklist.repository.TaskRepository;
+import com.badradstorm.tasklist.repository.UserRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -53,5 +55,13 @@ public class TaskService {
   public int delete(int id) {
     taskRepository.deleteById(id);
     return id;
+  }
+
+  public List<TaskDto> getAll(int userId) throws UserNotFoundException {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+    return user.getTaskList().stream()
+        .map(converter::toDto)
+        .collect(Collectors.toList());
   }
 }

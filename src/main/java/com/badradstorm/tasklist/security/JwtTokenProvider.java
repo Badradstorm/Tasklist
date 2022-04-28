@@ -54,8 +54,8 @@ public class JwtTokenProvider {
 
   public boolean validateToken(String token) {
     try {
-      Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-      return !claimsJws.getBody().getExpiration().before(new Date());
+      Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+      return true;
     } catch (JwtException | IllegalArgumentException e) {
       throw new JwtAuthenticationException("jwt токен просрочен или не валиден");
     }

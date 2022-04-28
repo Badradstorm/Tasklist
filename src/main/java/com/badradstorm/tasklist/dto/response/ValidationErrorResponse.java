@@ -1,4 +1,4 @@
-package com.badradstorm.tasklist.dto;
+package com.badradstorm.tasklist.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;

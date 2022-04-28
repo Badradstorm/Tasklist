@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.badradstorm.tasklist.BaseMockTest;
-import com.badradstorm.tasklist.dto.TaskDto;
+import com.badradstorm.tasklist.dto.response.TaskDto;
 import com.badradstorm.tasklist.dto.converter.EntityConverter;
 import com.badradstorm.tasklist.entity.Task;
 import com.badradstorm.tasklist.entity.User;

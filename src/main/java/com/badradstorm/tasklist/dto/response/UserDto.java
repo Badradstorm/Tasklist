@@ -1,4 +1,4 @@
-package com.badradstorm.tasklist.dto;
+package com.badradstorm.tasklist.dto.response;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UserDto extends BaseDto implements UserDetails {
+public class UserDto extends BaseResponse implements UserDetails {
 
   private final String username;
   private final String password;

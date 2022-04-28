@@ -1,12 +1,17 @@
 package com.badradstorm.tasklist.controller;
 
-import com.badradstorm.tasklist.dto.AuthRequestDto;
+import com.badradstorm.tasklist.dto.request.AuthRequestDto;
+import com.badradstorm.tasklist.dto.request.SignupRequest;
+import com.badradstorm.tasklist.exception.UserNotFoundException;
+import com.badradstorm.tasklist.exception.UsernameAlreadyExistsException;
 import com.badradstorm.tasklist.service.AuthService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,13 +27,25 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<?> authenticate(@RequestBody AuthRequestDto request) {
-      return ResponseEntity.ok(authService.authenticate(request));
+  public ResponseEntity<?> login(@RequestBody AuthRequestDto request) {
+      return ResponseEntity.ok(authService.login(request));
   }
 
   @PostMapping("/logout")
   public void logout(HttpServletRequest request, HttpServletResponse response) {
     SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
     logoutHandler.logout(request, response, null);
+  }
+
+  @PostMapping("/register")
+  public ResponseEntity<?> register(@Valid @RequestBody SignupRequest request)
+      throws UsernameAlreadyExistsException {
+    return ResponseEntity.ok(authService.register(request));
+  }
+
+  @PutMapping("/update")
+  public ResponseEntity<?> update(@Valid @RequestBody SignupRequest request)
+      throws UsernameAlreadyExistsException, UserNotFoundException {
+    return ResponseEntity.ok(authService.update(request));
   }
 }

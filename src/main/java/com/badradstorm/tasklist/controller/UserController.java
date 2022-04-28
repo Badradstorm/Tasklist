@@ -1,6 +1,6 @@
 package com.badradstorm.tasklist.controller;
 
-import com.badradstorm.tasklist.dto.UserDto;
+import com.badradstorm.tasklist.dto.response.UserDto;
 import com.badradstorm.tasklist.entity.User;
 import com.badradstorm.tasklist.exception.UserNotFoundException;
 import com.badradstorm.tasklist.exception.UsernameAlreadyExistsException;
@@ -43,22 +43,9 @@ public class UserController extends BaseController {
     return ResponseEntity.ok(service.getOne(id));
   }
 
-  @PostMapping
-  @PreAuthorize("hasAuthority('users:write')")
-  public ResponseEntity<?> create(@Valid @RequestBody User user) throws UsernameAlreadyExistsException {
-    return responseWithLocation(service.create(user));
-  }
-
   @DeleteMapping("{id}")
   @PreAuthorize("hasAuthority('users:write')")
   public ResponseEntity<?> delete(@PathVariable @NotNull int id) {
     return ResponseEntity.ok(service.delete(id));
-  }
-
-  @PutMapping
-  @PreAuthorize("hasAuthority('users:write')")
-  public ResponseEntity<?> update(@Valid @RequestBody User user)
-      throws UsernameAlreadyExistsException, UserNotFoundException {
-    return responseWithLocation(service.update(user));
   }
 }

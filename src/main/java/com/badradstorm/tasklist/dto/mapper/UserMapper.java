@@ -1,6 +1,6 @@
 package com.badradstorm.tasklist.dto.mapper;
 
-import com.badradstorm.tasklist.dto.UserDto;
+import com.badradstorm.tasklist.dto.response.UserDto;
 import com.badradstorm.tasklist.entity.User;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

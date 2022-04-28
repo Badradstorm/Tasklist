@@ -1,4 +1,4 @@
-package com.badradstorm.tasklist.dto;
+package com.badradstorm.tasklist.dto.request;
 
 import lombok.Data;
 
