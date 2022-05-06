@@ -2,7 +2,6 @@ package com.badradstorm.tasklist.controller;
 
 import com.badradstorm.tasklist.entity.Task;
 import com.badradstorm.tasklist.exception.TaskNotFoundException;
-import com.badradstorm.tasklist.exception.UserNotFoundException;
 import com.badradstorm.tasklist.service.TaskService;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -11,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,28 +31,32 @@ public class TaskController extends BaseController {
 
   @GetMapping
   @PreAuthorize("hasAuthority('tasks:read')")
-  public ResponseEntity<?> getAll(@RequestParam @NotNull int userId)
-      throws UserNotFoundException {
-    return ResponseEntity.ok(taskService.getAll(userId));
+  public ResponseEntity<?> getAll() {
+    return ResponseEntity.ok(taskService.getAll());
+  }
+
+  @GetMapping("{taskId}")
+  @PreAuthorize("hasAuthority('tasks:read')")
+  public ResponseEntity<?> getOne(@PathVariable @NotNull int taskId) throws TaskNotFoundException {
+    return ResponseEntity.ok(taskService.getOne(taskId));
   }
 
   @PostMapping
   @PreAuthorize("hasAuthority('tasks:write')")
-  public ResponseEntity<?> create(@Valid @RequestBody Task task, @RequestParam @NotNull int userId)
-      throws UserNotFoundException {
-    return responseWithLocation(taskService.create(task, userId));
+  public ResponseEntity<?> create(@Valid @RequestBody Task task) {
+    return responseWithLocation(taskService.create(task));
   }
 
   @PutMapping
   @PreAuthorize("hasAuthority('tasks:write')")
-  public ResponseEntity<?> update(@Valid @RequestBody Task task, @RequestParam @NotNull int userId)
-      throws TaskNotFoundException, UserNotFoundException {
-    return responseWithLocation(taskService.update(task, userId));
+  public ResponseEntity<?> update(@Valid @RequestBody Task task)
+      throws TaskNotFoundException {
+    return responseWithLocation(taskService.update(task));
   }
 
   @DeleteMapping
   @PreAuthorize("hasAuthority('tasks:write')")
-  public ResponseEntity<?> delete(@RequestParam @NotNull int taskId) {
-    return ResponseEntity.ok(taskService.delete(taskId));
+  public ResponseEntity<?> delete(@RequestParam @NotNull int taskId) throws TaskNotFoundException {
+    return ResponseEntity.ok(String.format("Задача с id %s успешно удалена!", taskService.delete(taskId)));
   }
 }

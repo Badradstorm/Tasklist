@@ -2,17 +2,17 @@ package com.badradstorm.tasklist.service;
 
 import com.badradstorm.tasklist.dto.response.TaskDto;
 import com.badradstorm.tasklist.dto.converter.EntityConverter;
+import com.badradstorm.tasklist.dto.response.UserDto;
 import com.badradstorm.tasklist.entity.Task;
 import com.badradstorm.tasklist.entity.User;
 import com.badradstorm.tasklist.exception.TaskNotFoundException;
-import com.badradstorm.tasklist.exception.UserNotFoundException;
 import com.badradstorm.tasklist.repository.TaskRepository;
 import com.badradstorm.tasklist.repository.UserRepository;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,21 +30,16 @@ public class TaskService {
   }
 
   @Cacheable("tasks")
-  public TaskDto create(Task task, int userId) throws UserNotFoundException {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-    task.setUser(user);
+  public TaskDto create(Task task) {
+    task.setUser(currentUser());
     return converter.toDto(taskRepository.save(task));
   }
 
   @CachePut("tasks")
-  public TaskDto update(Task task, int userId) throws UserNotFoundException, TaskNotFoundException {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-
-    Task taskFromUser = user.getTaskList().stream()
+  public TaskDto update(Task task) throws TaskNotFoundException {
+    Task taskFromUser = currentUser().getTaskList().stream()
         .filter(userTask -> userTask.getTitle().equals(task.getTitle()))
-        .findFirst().orElseThrow(() -> new TaskNotFoundException("Такая задача не найдена"));
+        .findFirst().orElseThrow(() -> new TaskNotFoundException("Задача с таким id не найдена"));
 
     taskFromUser.setTitle(task.getTitle());
     taskFromUser.setCompleted(task.isCompleted());
@@ -52,16 +47,31 @@ public class TaskService {
   }
 
   @CacheEvict("tasks")
-  public int delete(int id) {
-    taskRepository.deleteById(id);
-    return id;
+  public int delete(int taskId) throws TaskNotFoundException {
+    findTaskDtoFromCurrentUserDto(taskId);
+    taskRepository.deleteById(taskId);
+    return taskId;
   }
 
-  public List<TaskDto> getAll(int userId) throws UserNotFoundException {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-    return user.getTaskList().stream()
-        .map(converter::toDto)
-        .collect(Collectors.toList());
+  public List<TaskDto> getAll() {
+    return currentUserDto().getTaskList();
+  }
+
+  public TaskDto getOne(int taskId) throws TaskNotFoundException {
+    return findTaskDtoFromCurrentUserDto(taskId);
+  }
+
+  private UserDto currentUserDto() {
+    return (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+  }
+
+  private User currentUser() {
+    return userRepository.getById(currentUserDto().getId());
+  }
+
+  private TaskDto findTaskDtoFromCurrentUserDto(int taskId) throws TaskNotFoundException {
+    return currentUserDto().getTaskList().stream()
+        .filter(taskDto -> taskDto.getId() == taskId)
+        .findFirst().orElseThrow(() -> new TaskNotFoundException("Задача с таким id не найдена"));
   }
 }

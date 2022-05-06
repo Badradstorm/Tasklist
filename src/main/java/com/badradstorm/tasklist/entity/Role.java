@@ -7,8 +7,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Getter
 public enum Role {
-  USER(Set.of(Permission.TASKS_READ, Permission.TASKS_WRITE)),
-  ADMIN(Set.of(Permission.USERS_READ, Permission.USERS_WRITE, Permission.TASKS_READ,
+  USER(Set.of(
+      Permission.TASKS_READ,
+      Permission.TASKS_WRITE,
+      Permission.USERS_UPDATE)),
+  ADMIN(Set.of(
+      Permission.USERS_READ,
+      Permission.USERS_WRITE,
+      Permission.USERS_DELETE,
+      Permission.USERS_UPDATE,
+      Permission.TASKS_READ,
       Permission.TASKS_WRITE));
 
   private final Set<Permission> permissions;

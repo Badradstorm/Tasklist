@@ -1,5 +1,6 @@
 package com.badradstorm.tasklist.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -35,21 +36,25 @@ public class UserDto extends BaseResponse implements UserDetails {
   }
 
   @Override
+  @JsonIgnore
   public boolean isAccountNonExpired() {
     return isActive;
   }
 
   @Override
+  @JsonIgnore
   public boolean isAccountNonLocked() {
     return isActive;
   }
 
   @Override
+  @JsonIgnore
   public boolean isCredentialsNonExpired() {
     return isActive;
   }
 
   @Override
+  @JsonIgnore
   public boolean isEnabled() {
     return isActive;
   }

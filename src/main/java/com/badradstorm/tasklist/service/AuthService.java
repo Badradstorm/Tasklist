@@ -1,6 +1,6 @@
 package com.badradstorm.tasklist.service;
 
-import com.badradstorm.tasklist.dto.request.AuthRequestDto;
+import com.badradstorm.tasklist.dto.request.AuthRequest;
 import com.badradstorm.tasklist.dto.request.SignupRequest;
 import com.badradstorm.tasklist.dto.response.AuthResponse;
 import com.badradstorm.tasklist.dto.response.MessageResponse;
@@ -40,7 +40,7 @@ public class AuthService {
     this.encoder = encoder;
   }
 
-  public AuthResponse login(AuthRequestDto request) {
+  public AuthResponse login(AuthRequest request) {
     try {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
@@ -52,7 +52,7 @@ public class AuthService {
 
       return new AuthResponse(user.getUsername(), token);
     } catch (AuthenticationException e) {
-      throw new JwtAuthenticationException("Неверный логин/пароль");
+      throw new JwtAuthenticationException("Неверный логин/пароль", e.getCause());
     }
   }
 

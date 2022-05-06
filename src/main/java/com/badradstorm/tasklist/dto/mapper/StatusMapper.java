@@ -1,5 +1,8 @@
 package com.badradstorm.tasklist.dto.mapper;
 
+import static com.badradstorm.tasklist.entity.Status.ACTIVE;
+import static com.badradstorm.tasklist.entity.Status.BANNED;
+
 import com.badradstorm.tasklist.entity.Status;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -9,7 +12,7 @@ import org.mapstruct.Mapper;
     injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface StatusMapper {
 
-  default Boolean map(Status status){
+  default Boolean map(Status status) {
     switch (status) {
       case ACTIVE:
         return true;
@@ -17,5 +20,12 @@ public interface StatusMapper {
       default:
         return false;
     }
+  }
+
+  default Status map(Boolean bool) {
+    if (bool) {
+      return ACTIVE;
+    }
+    return BANNED;
   }
 }
